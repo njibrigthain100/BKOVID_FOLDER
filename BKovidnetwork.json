@@ -1,0 +1,165 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "",
+    "Metadata": {
+
+    },
+    "Parameters": {
+      "EnvironmentName": {
+          "Description": "environment Name",
+          "Type": "String",
+          "AllowedValues": [
+            "DEV",
+            "PREPROD",
+            "PROD"
+          ],
+          "ConstraintDescription": "Environment must match with specified AllowedValue",
+          "Default": "DEV"
+      },
+      "BKovidVPCCIDR": {
+          "Description": "Provide CIDR for VPC",
+          "Type": "String"
+      },
+      "BKovidPRIVATESUBNETAZ": {
+          "Description": "provide AZ for private subnet",
+          "Type": "AWS::EC2::AvailabilityZone::Name"
+      },
+      "BKovidPRIVATESUBNETCIDR": {
+          "Description": "provide CIDR for private subnet",
+          "Type": "String"
+      },
+      "BKovidPUBLICSUBNETAZ": {
+          "Description": "provide AZ for public subnet",
+          "Type": "AWS::EC2::AvailabilityZone::Name"
+      },
+      "BKovidPUBLICSUBNETCIDR": {
+          "Description": "provide CIDR for public subnet",
+          "Type": "String"
+      },
+      "BKovidDESTINATIONCIDR": {
+          "Description": "provide cidr for internet",
+          "Type": "String"
+      }
+
+    },
+    "Mappings": {
+
+    },
+    "Conditions": {
+
+    },
+    "Resources": {
+      "BKovidVPC": {
+        "Type": "AWS::EC2::VPC",
+        "Properties": {
+          "CidrBlock": { "Ref": "BKovidVPCCIDR" },
+          "Tags": [
+            { "Key": "LOB", "Value":  "ecommerce" },
+            { "Key": "owner", "Value":  "BKoivdinc" },
+            { "Key": "budget code", "Value":  "2249" },
+            { "Key": "patch group", "Value":  "linux" },
+            { "Key": "Name", "Value":  "BKovidVPC" },
+            { "Key": "application id", "Value":  "OVID22JJ" },
+            { "Key": "project manager", "Value":  "Brigthain Kargong" },
+            { "Key": "compliance classification", "Value":  "PCI" },
+            { "Key": "environment", "Value":  "DEV, PREPROD, PROD" },
+            { "Key": "data classification", "Value":  "classified" },
+            { "Key": "project name", "Value":  "ovid application deployment" }
+          ]
+
+        }
+      },
+      "BKovidIG": {
+        "Type": "AWS::EC2::InternetGateway",
+        "Properties": {
+          "Tags": [{ "Key": "Name", "Value":  "BKovidIG" }]
+        }
+      },
+      "AttachGateway": {
+        "Type": "AWS::EC2::VPCGatewayAttachment",
+        "Properties": {
+          "VpcId": { "Ref": "BKovidVPC" },
+          "InternetGatewayId": { "Ref": "BKovidIG" }
+        }
+      },
+      "BKovidPRIVATESUBNET": {
+        "Type": "AWS::EC2::Subnet",
+        "Properties": {
+          "AvailabilityZone": { "Ref": "BKovidPRIVATESUBNETAZ" },
+          "VpcId": { "Ref": "BKovidVPC" },
+          "CidrBlock": { "Ref": "BKovidPRIVATESUBNETCIDR" },
+          "Tags": [{ "Key": "Name", "Value":  "BKovidPRIVATESUBNET" }]
+        }
+      },
+      "BKovidPUBLICSUBNET": {
+        "Type": "AWS::EC2::Subnet",
+        "Properties": {
+          "AvailabilityZone": { "Ref": "BKovidPUBLICSUBNETAZ" },
+          "VpcId": { "Ref": "BKovidVPC" },
+          "CidrBlock": { "Ref": "BKovidPUBLICSUBNETCIDR" },
+          "Tags": [{ "Key": "Name", "Value":  "BKovidPUBLICSUBNET" }]
+        }
+      },
+      "BKovidPRIVATERT": {
+        "Type": "AWS::EC2::RouteTable",
+        "Properties": {
+          "VpcId": { "Ref": "BKovidVPC" },
+          "Tags": [{ "Key": "Name", "Value":  "BKovidPRIVATERT" }]
+        }
+      },
+      "BKovidPUBLICRT": {
+        "Type": "AWS::EC2::RouteTable",
+        "Properties": {
+          "VpcId": { "Ref": "BKovidVPC" },
+          "Tags": [{ "Key": "Name", "Value":  "BKovidPUBLICRT" }]
+        }
+      },
+      "BKovidPRIVATERTASSOCITAION": {
+        "Type": "AWS::EC2::SubnetRouteTableAssociation",
+        "Properties": {
+          "SubnetId": { "Ref": "BKovidPRIVATESUBNET" },
+          "RouteTableId": { "Ref": "BKovidPRIVATERT" }
+        }
+      },
+      "BKovidPUBLICRTASSOCIATION": {
+        "Type": "AWS::EC2::SubnetRouteTableAssociation",
+        "Properties": {
+          "SubnetId": { "Ref": "BKovidPUBLICSUBNET" },
+          "RouteTableId": { "Ref": "BKovidPUBLICRT" }
+        }
+      },
+      "BKovidROUTE": {
+        "Type": "AWS::EC2::Route",
+        "Properties": {
+          "RouteTableId": { "Ref": "BKovidPUBLICRT" },
+          "DestinationCidrBlock": { "Ref": "BKovidDESTINATIONCIDR" },
+          "GatewayId": { "Ref": "BKovidIG" }
+        }
+      }
+
+
+    },
+    "Outputs" : {
+    "bkovidvpc" : {
+      "Description" : "Print vpc id",
+      "Value" : { "Ref": "BKovidVPC" },
+      "Export" : {
+        "Name" : "ExportVPC"
+      }
+  },
+  "bkovidprivateSN" : {
+    "Description" : "Print private subnet ID",
+    "Value" : { "Ref": "BKovidPRIVATESUBNET" },
+    "Export" : {
+      "Name" : "ExportedPrivateSUBNET"
+    }
+  },
+  "bkovidpublicSN" : {
+    "Description" : "Print public subnet ID",
+    "Value" : { "Ref": "BKovidPUBLICSUBNET" },
+    "Export" : {
+      "Name" : "ExportedpublicSUBNET"
+      }
+    }
+  }
+}

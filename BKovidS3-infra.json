@@ -1,0 +1,101 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "",
+    "Metadata": {
+
+    },
+    "Parameters": {
+      "EnvironmentName": {
+          "Description": "Environment Name",
+          "Type": "String",
+          "AllowedValues": [
+            "DEV",
+            "PREPROD",
+            "PROD"
+          ],
+          "ConstraintDescription": "Environment must match with specified AllowedValue"
+      },
+      "BKovidappBucketName": {
+          "Description": "Provide a unique bucket name for BKovidappBucketName",
+          "Type": "String"
+      },
+      "BKovidappLoggingBucket": {
+          "Description": "provide a unique bucket name for BKovidappLoggingBucket",
+          "Type": "String"
+      }
+    },
+    "Mappings": {
+
+    },
+    "Conditions": {
+
+    },
+    "Resources": {
+      "BKovidS3CloudFront": {
+        "Type": "AWS::S3::Bucket",
+        "Properties": {
+          "BucketName": { "Ref": "BKovidappBucketName" },
+          "VersioningConfiguration": {
+            "Status": "Enabled"
+          },
+          "WebsiteConfiguration": {
+            "IndexDocument": "index.html",
+            "ErrorDocument": "error.html"
+          },
+          "BucketEncryption": {
+            "ServerSideEncryptionConfiguration" : [
+              {
+                "ServerSideEncryptionByDefault": {
+                  "SSEAlgorithm": "aws:kms",
+                  "KMSMasterKeyID": "BKovid-KMS-KEY-ARN"
+                }
+              }
+            ]
+          },
+          "LoggingConfiguration": {
+                    "DestinationBucketName": {"Ref": "BKovidappLoggingBucket"},
+                    "LogFilePrefix": "BKovid-logs"
+                  }
+                }
+              },
+              "BKovidLoggingBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketName": { "Ref": "BKovidappLoggingBucket" },
+                "AccessControl": "LogDeliveryWrite"
+            }
+        },
+        "BKovidBucketPolicy": {
+          "Type": "AWS::S3::BucketPolicy",
+          "Properties": {
+            "Bucket" : { "Ref": "BKovidS3CloudFront" },
+            "PolicyDocument" : {
+              "Version": "2012-10-17",
+                "Statement": [{
+                        "Action": [
+                            "s3:*"
+                        ],
+                        "Effect": "Deny",
+                        "Resource": {  "Fn::Join": ["",[ "arn:aws:s3:::",{"Ref": "BKovidS3CloudFront"},"/*"]]},
+                        "Principal": "*"
+                      }]
+            }
+          }
+        }
+      },
+    "Outputs": {
+      "WebsiteURL" : {
+    "Description" : "URL for website hosted on S3",
+    "Value" : { "Fn::GetAtt": [ "BKovidS3CloudFront", "WebsiteURL"] },
+    "Export" : {
+      "Name" : "BKovidwebsiteURL"
+      }
+    },
+    "BKovidS3secureURL" : {
+  "Description" : "Provide the name of amazon S3 to host static content",
+  "Value" : { "Fn::Join": [ "", ["https://", { "Fn::GetAtt": ["BKovidS3CloudFront","DomainName"]}]
+]
+    }
+  }
+  }
+}

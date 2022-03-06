@@ -1,0 +1,30 @@
+[
+    {
+     "ParameterKey": "EnvironmentName",
+     "ParameterValue": "DEV"
+    },
+    {
+     "ParameterKey": "BKovidVPCCIDR",
+     "ParameterValue": "10.0.0.0/16"
+    },
+    {
+     "ParameterKey": "BKovidPRIVATESUBNETAZ",
+     "ParameterValue": "us-west-2a"
+    },
+    {
+     "ParameterKey": "BKovidPRIVATESUBNETCIDR",
+     "ParameterValue": "10.0.1.0/24"
+    },
+    {
+     "ParameterKey": "BKovidPUBLICSUBNETAZ",
+     "ParameterValue" : "us-west-2b"
+    },
+    {
+     "ParameterKey": "BKovidPUBLICSUBNETCIDR",
+     "ParameterValue": "10.0.2.0/24"
+    },
+    {
+     "ParameterKey": "BKovidDESTINATIONCIDR",
+     "ParameterValue": "0.0.0.0/0"
+    }
+  ]

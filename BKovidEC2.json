@@ -1,0 +1,143 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "",
+    "Metadata": {
+
+    },
+    "Parameters": {
+      "EnvironmentName": {
+          "Description": "Environment Name",
+          "Type": "String",
+          "AllowedValues": [
+            "DEV",
+            "PREPROD",
+            "PROD"
+          ],
+          "ConstraintDescription": "Environment must match with specified AllowedValue"
+      },
+      "BKovidWEBSERVERINSTANCETYPE": {
+          "Description": "provide instance type for environment",
+          "Type": "String",
+          "AllowedValues":[
+            "t2.micro",
+            "t2.small",
+            "t2.nano",
+            "t1.micro"
+          ],
+          "ConstraintDescription": "Web server instance must match with AllowedValue"
+      },
+      "BKovidWEBSERVERKEYNAME": {
+          "Description": "Provide key name for web server",
+          "Type": "AWS::EC2::KeyPair::KeyName"
+      },
+      "BKovidAPPSERVERINSTANCETYPE": {
+          "Description": "provide instance type for environment",
+          "Type": "String",
+          "AllowedValues":[
+            "t2.micro",
+            "t2.small",
+            "t2.nano",
+            "t1.micro"
+          ],
+          "ConstraintDescription": "App server instance must match with AllowedValue"
+    },
+    "BKovidAPPSERVERKEYNAME": {
+        "Description": "Provide key name for app server",
+        "Type": "AWS::EC2::KeyPair::KeyName"
+      }
+  },
+    "Mappings": {
+      "BKovidMAPFORAMI": {
+                "us-east-1": {
+                  "AMIID": "ami-033b95fb8079dc481"
+                },
+                "us-east-2": {
+                  "AMIID": "ami-0b614a5d911900a9b"
+                },
+                "us-west-1": {
+                "AMIID": "ami-0573b70afecda915d"
+                },
+               "us-west-2": {
+                "AMIID": "ami-0341aeea105412b57"
+               }
+      }
+    },
+    "Conditions": {
+
+    },
+    "Resources": {
+      "BKovidWEBBSERVER": {
+          "Type": "AWS::EC2::Instance",
+          "Properties": {
+              "KeyName": { "Ref": "BKovidWEBSERVERKEYNAME" },
+              "ImageId": { "Fn::FindInMap": [
+                  "BKovidMAPFORAMI",
+                  { "Ref": "AWS::Region" },
+                  "AMIID"
+              ]},
+              "InstanceType": { "Ref": "BKovidWEBSERVERINSTANCETYPE" },
+              "NetworkInterfaces": [ {
+               "AssociatePublicIpAddress": "true",
+               "DeviceIndex": "0",
+               "GroupSet": [ { "Fn::ImportValue": "ExportWEBSERVERSG" } ],
+               "SubnetId": { "Fn::ImportValue": "ExportedpublicSUBNET" }
+               }],
+              "Tags": [  { "Key": "LOB", "Value":  "ecommerce" },
+                { "Key": "owner", "Value":  "BKoivdinc" },
+                { "Key": "budget code", "Value":  "2249" },
+                { "Key": "patch group", "Value":  "linux" },
+                { "Key": "Name", "Value":  "BKovidWEBBServer" },
+                { "Key": "application id", "Value":  "OVID22JJ" },
+                { "Key": "project manager", "Value":  "Brigthain Kargong" },
+                { "Key": "compliance classification", "Value":  "PCI" },
+                { "Key": "environment", "Value":  "DEV, PREPROD, PROD" },
+                { "Key": "data classification", "Value":  "classified" },
+                { "Key": "project name", "Value":  "ovid application deployment" }
+              ]
+            }
+        },
+          "BKovidAPPSERVER": {
+              "Type": "AWS::EC2::Instance",
+              "Properties": {
+                  "KeyName": { "Ref": "BKovidAPPSERVERKEYNAME" },
+                  "ImageId": { "Fn::FindInMap": [
+                      "BKovidMAPFORAMI",
+                      { "Ref": "AWS::Region" },
+                      "AMIID"
+                  ]},
+                  "InstanceType": { "Ref": "BKovidAPPSERVERINSTANCETYPE" },
+                  "SecurityGroupIds" : [ { "Fn::ImportValue": "exportAPPSERVERSG" } ],
+                  "SubnetId": { "Fn::ImportValue": "ExportedPrivateSUBNET" },
+                  "Tags": [{ "Key": "LOB", "Value":  "ecommerce" },
+                  { "Key": "owner", "Value":  "BKoivdinc" },
+                  { "Key": "budget code", "Value":  "2249" },
+                  { "Key": "patch group", "Value":  "linux" },
+                  { "Key": "Name", "Value":  "BKovidAPPServer" },
+                  { "Key": "application id", "Value":  "OVID22JJ" },
+                  { "Key": "project manager", "Value":  "Brigthain Kargong" },
+                  { "Key": "compliance classification", "Value":  "PCI" },
+                  { "Key": "environment", "Value":  "DEV, PREPROD, PROD" },
+                  { "Key": "data classification", "Value":  "classified" },
+                  { "Key": "project name", "Value":  "ovid application deployment" }
+                ]
+              }
+            },
+            "BKovidWEBserverEIP": {
+              "Type": "AWS::EC2::EIP",
+              "Properties": {
+                "Domain": "vpc",
+                "InstanceId": { "Ref": "BKovidWEBBSERVER" }
+              }
+            },
+            "BKovidAPPserverEIP": {
+              "Type": "AWS::EC2::EIP",
+              "Properties": {
+                "Domain": "vpc",
+                "InstanceId": { "Ref": "BKovidAPPSERVER" }
+              }
+            }
+          },
+    "Outputs": {
+
+    }
+  }

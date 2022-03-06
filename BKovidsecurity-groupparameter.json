@@ -1,0 +1,67 @@
+[
+    {
+     "ParameterKey": "BKovidWEBSERVERINGRESSFROMPORTSSH",
+     "ParameterValue": "22"
+    },
+    {
+     "ParameterKey": "BKovidWEBSERVERINGRESSTOPORTSSH",
+     "ParameterValue": "22"
+    },
+    {
+     "ParameterKey": "BKovidsourceIPFORSSH",
+     "ParameterValue": "0.0.0.0/0"
+    },
+    {
+     "ParameterKey": "BKovidWEBSERVERINGRESSFROMPORTHTTP",
+     "ParameterValue": "80"
+    },
+    {
+     "ParameterKey": "BKovidWEBSERVERINGRESSTOPORTHTTP",
+     "ParameterValue" : "80"
+    },
+    {
+     "ParameterKey": "BKovidsourceIPFORHTTP",
+     "ParameterValue": "0.0.0.0/0"
+    },
+    {
+     "ParameterKey": "BKovidWEBSERVERINGRESSFROMPORTHTTPS",
+     "ParameterValue": "443"
+    },
+    {
+     "ParameterKey": "BKovidWEBSERVERINGRESSTOPORTHTTPS",
+     "ParameterValue": "443"
+    },
+    {
+     "ParameterKey": "BKovidsourceIPFORHTTPS",
+     "ParameterValue": "0.0.0.0/0"
+    },
+    {
+     "ParameterKey": "BKovidAPPSERVERINGRESSFROMPORTSSH",
+     "ParameterValue": "22"
+    },
+    {
+     "ParameterKey": "BKovidAPPSERVERINGRESSTOPORTSSH",
+     "ParameterValue": "22"
+    },
+    {
+     "ParameterKey": "BKovidAPPSERVERINGRESSFROMPORTHTTP",
+     "ParameterValue": "80"
+   },
+   {
+    "ParameterKey": "BKovidAPPSERVERINGRESSTOPORTHTTP",
+    "ParameterValue": "80"
+   },
+   {
+   "ParameterKey": "BKovidAPPSERVERINGRESSFROMPORTHTTPS",
+   "ParameterValue": "443"
+   },
+   {
+  "ParameterKey": "BKovidAPPSERVERINGRESSTOPORTHTTPS",
+  "ParameterValue": "443"
+  },
+  {
+  "ParameterKey": "SGVPCCIDR",
+  "ParameterValue": "10.0.0.0/16"
+   }
+
+ ]

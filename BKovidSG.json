@@ -1,0 +1,178 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "",
+    "Metadata": {
+
+    },
+    "Parameters":{
+    "BKovidWEBSERVERINGRESSFROMPORTSSH": {
+          "Description": "provide security group ingress from portSSH",
+          "Type": "String",
+          "Default": "22"
+      },
+      "BKovidWEBSERVERINGRESSTOPORTSSH": {
+          "Description": "provide security group ingress to port SSH",
+          "Type": "String",
+          "Default": "22"
+      },
+      "BKovidsourceIPFORSSH": {
+          "Description": "provide source IP for SSH",
+          "Type": "String",
+          "Default": "0.0.0.0/0"
+      },
+      "BKovidWEBSERVERINGRESSFROMPORTHTTP": {
+          "Description": "provide security group ingress from port HTTP",
+          "Type": "String",
+          "Default": "80"
+      },
+      "BKovidWEBSERVERINGRESSTOPORTHTTP": {
+          "Description": "provide security group ingress to port HTTP",
+          "Type": "String",
+          "Default": "80"
+      },
+      "BKovidsourceIPFORHTTP": {
+          "Description": "provide source IP for HTTP",
+          "Type": "String",
+          "Default": "0.0.0.0/0"
+      },
+      "BKovidWEBSERVERINGRESSFROMPORTHTTPS": {
+          "Description": "provide security group ingress from port HTTPS",
+          "Type": "String",
+          "Default": "443"
+      },
+      "BKovidWEBSERVERINGRESSTOPORTHTTPS": {
+          "Description": "provide security group ingress to port HTTPS",
+          "Type": "String",
+          "Default": "443"
+      },
+      "BKovidsourceIPFORHTTPS": {
+          "Description": "provide source IP for HTTPS",
+          "Type": "String",
+          "Default": "0.0.0.0/0"
+      },
+      "BKovidAPPSERVERINGRESSFROMPORTSSH": {
+            "Description": "provide app server security group ingress from portSSH",
+            "Type": "String",
+            "Default": "22"
+        },
+        "BKovidAPPSERVERINGRESSTOPORTSSH": {
+            "Description": "provide app server security group ingress to port SSH",
+            "Type": "String",
+            "Default": "22"
+        },
+        "BKovidAPPSERVERINGRESSFROMPORTHTTP": {
+            "Description": "provide app server security group ingress from port HTTP",
+            "Type": "String",
+            "Default": "80"
+        },
+        "BKovidAPPSERVERINGRESSTOPORTHTTP": {
+            "Description": "provide app server security group ingress to port HTTP",
+            "Type": "String",
+            "Default": "80"
+        },
+        "BKovidAPPSERVERINGRESSFROMPORTHTTPS": {
+            "Description": "provide app server security group ingress from port HTTPS",
+            "Type": "String",
+            "Default": "443"
+        },
+        "BKovidAPPSERVERINGRESSTOPORTHTTPS": {
+            "Description": "provide app server security group ingress to port HTTPS",
+            "Type": "String",
+            "Default": "443"
+    }
+  },
+    "Mappings": {
+
+    },
+    "Conditions": {
+
+    },
+    "Resources": {
+      "BKovidWEBBSERVERSG" : {
+        "Type" : "AWS::EC2::SecurityGroup",
+        "Properties" : {
+          "GroupDescription" : "BKovidWEBBSERVER security group",
+          "SecurityGroupIngress" : [
+            {
+              "IpProtocol" : "tcp",
+              "FromPort" : { "Ref": "BKovidWEBSERVERINGRESSFROMPORTSSH" },
+              "ToPort" : { "Ref": "BKovidWEBSERVERINGRESSTOPORTSSH" },
+              "CidrIp" : { "Ref": "BKovidsourceIPFORSSH" }},
+            {
+               "IpProtocol" : "tcp",
+               "FromPort" : { "Ref": "BKovidWEBSERVERINGRESSFROMPORTHTTP" },
+               "ToPort" : { "Ref": "BKovidWEBSERVERINGRESSTOPORTHTTP" },
+               "CidrIp" : { "Ref": "BKovidsourceIPFORHTTP" }},
+             {
+               "IpProtocol" : "tcp",
+               "FromPort" : { "Ref": "BKovidWEBSERVERINGRESSFROMPORTHTTPS" },
+               "ToPort" : { "Ref": "BKovidWEBSERVERINGRESSTOPORTHTTPS" },
+               "CidrIp" : { "Ref": "BKovidsourceIPFORHTTPS" } }],
+          "VpcId" : { "Fn::ImportValue": "ExportVPC"},
+          "Tags" :  [{ "Key": "LOB", "Value":  "ecommerce" },
+          { "Key": "owner", "Value":  "BKoivdinc" },
+          { "Key": "budget code", "Value":  "2249" },
+          { "Key": "patch group", "Value":  "linux" },
+          { "Key": "Name", "Value":  "BKovidVPC" },
+          { "Key": "application id", "Value":  "OVID22JJ" },
+          { "Key": "project manager", "Value":  "Brigthain Kargong" },
+          { "Key": "compliance classification", "Value":  "PCI" },
+          { "Key": "environment", "Value":  "DEV, PREPROD, PROD" },
+          { "Key": "data classification", "Value":  "classified" },
+          { "Key": "project name", "Value":  "ovid application deployment" }
+        ]
+      }
+    },
+      "BKovidAPPSERVERSG" : {
+        "Type" : "AWS::EC2::SecurityGroup",
+        "Properties" : {
+          "GroupDescription" : "BKovidAPPSERVER security group",
+          "SecurityGroupIngress" : [
+            {
+              "IpProtocol" : "tcp",
+              "FromPort" : { "Ref": "BKovidAPPSERVERINGRESSFROMPORTSSH" },
+              "ToPort" : { "Ref": "BKovidAPPSERVERINGRESSTOPORTSSH" },
+              "SourceSecurityGroupId": { "Fn::GetAtt" : [ "BKovidWEBBSERVERSG", "GroupId" ]} },
+            {
+              "IpProtocol" : "tcp",
+              "FromPort" : { "Ref": "BKovidAPPSERVERINGRESSFROMPORTHTTP" },
+              "ToPort" : { "Ref": "BKovidAPPSERVERINGRESSTOPORTHTTP" },
+              "SourceSecurityGroupId": { "Fn::GetAtt" : [ "BKovidWEBBSERVERSG", "GroupId" ]} },
+            {
+              "IpProtocol" : "tcp",
+              "FromPort" : { "Ref": "BKovidAPPSERVERINGRESSFROMPORTHTTPS" },
+              "ToPort" : { "Ref": "BKovidAPPSERVERINGRESSTOPORTHTTPS" },
+              "SourceSecurityGroupId": { "Fn::GetAtt" : [ "BKovidWEBBSERVERSG", "GroupId" ]} }
+            ],
+          "VpcId" : { "Fn::ImportValue": "ExportVPC"},
+          "Tags" :  [{ "Key": "LOB", "Value":  "ecommerce" },
+          { "Key": "owner", "Value":  "BKoivdinc" },
+          { "Key": "budget code", "Value":  "2249" },
+          { "Key": "patch group", "Value":  "linux" },
+          { "Key": "Name", "Value":  "BKovidVPC" },
+          { "Key": "application id", "Value":  "OVID22JJ" },
+          { "Key": "project manager", "Value":  "Brigthain Kargong" },
+          { "Key": "compliance classification", "Value":  "PCI" },
+          { "Key": "environment", "Value":  "DEV, PREPROD, PROD" },
+          { "Key": "data classification", "Value":  "classified" },
+          { "Key": "project name", "Value":  "ovid application deployment" }]
+        }
+      }
+},
+  "Outputs" : {
+  "appserversg" : {
+    "Description" : "print app server security group",
+    "Value" : { "Ref": "BKovidAPPSERVERSG" },
+    "Export" : {
+      "Name" : "exportAPPSERVERSG"
+    }
+  },
+ "webserversg" : {
+   "Description" : "Print web server security group",
+  "Value" : { "Ref": "BKovidWEBBSERVERSG" },
+  "Export" : {
+  "Name" : "ExportWEBSERVERSG"
+      }
+    }
+  }
+}
